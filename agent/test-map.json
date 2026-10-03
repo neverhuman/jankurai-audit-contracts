@@ -31,7 +31,7 @@
     },
     ".github/": {
       "command": "bash scripts/ci-local.sh required",
-      "purpose": "verify CI workflow entrypoints stay pinned and thin"
+      "purpose": "verify agent adapter files under .github stay thin"
     },
     "Justfile": {
       "command": "bash scripts/ci-local.sh required",

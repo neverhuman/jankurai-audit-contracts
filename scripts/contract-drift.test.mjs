@@ -36,7 +36,7 @@ test('contract comparison accepts reordered inventory and blocks real removals o
   assert.notEqual(run().status, 0);
 });
 
-test('hosted and local quality recipes both execute contract drift', () => {
+test('full and local quality recipes both execute contract drift', () => {
   for (const name of ['github-check.sh', 'quality-gates.sh']) {
     assert.match(fs.readFileSync(path.join(root, 'ops/ci', name), 'utf8'), /^bash ops\/ci\/contract-drift\.sh$/m);
   }

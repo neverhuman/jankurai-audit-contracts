@@ -30,9 +30,9 @@ check: fast drift security audit
 drift:
     bash ops/ci/contract-drift.sh # openapi-diff over schemas/ and contracts/
 
-# Security lane: secret scanning, workflow linting, and SBOM/provenance.
-# gitleaks scans the committed tree for secrets; actionlint lints the CI
-# workflows; the SBOM hashes every shipped contract file.
+# Security lane: secret scanning and SBOM/provenance.
+# gitleaks scans the committed tree for secrets; the SBOM hashes every shipped
+# contract file.
 security:
     bash tools/security-lane.sh
 

@@ -20,15 +20,16 @@ The `Unreleased` section is promoted to a dated version heading at tag time.
 
 ## Release automation
 
-Releases are cut by CI, not by hand:
+GitHub is a publishing mirror only. CI runs on the forge and our own hosts, and
+releases are built and signed on our servers. A separate change introduces
+key-based release signing.
 
 1. Bump [`VERSION`](../VERSION) and promote the `Unreleased` section of
    [`CHANGELOG.md`](../CHANGELOG.md).
 2. Run the full local gate: `just check` (schema validation plus the jankurai
    self-audit).
-3. Push the version commit. The
-   [`ci.yml`](../.github/workflows/ci.yml) workflow runs the fast and jankurai
-   audit jobs and uploads the `repo-score` artifacts.
+3. Push the version commit through a forge pull request. The forge CI runs the
+   fast and jankurai audit lanes and keeps the `repo-score` artifacts.
 4. Tag the release commit with `jankurai-contracts-v<version>-split.<N>`. The
    tag mirror in [`.jeryu/repo.toml`](../.jeryu/repo.toml) publishes the
    immutable tag to the public GitHub mirror.
@@ -49,9 +50,6 @@ Release builds depend on immutable tags, never branches.
 - **Provenance**: the jankurai audit job publishes the `repo-score` artifacts
   (`.jankurai/repo-score.json` and `.md`) that prove the release passed the
   jankurai gate. The audit JSON is the signed record of the score and findings.
-- **Action pinning**: every third-party GitHub Action in
-  [`ci.yml`](../.github/workflows/ci.yml) is pinned to a 40-character commit SHA
-  so the supply chain of the release pipeline itself is fixed.
 
 ## Launch gate
 

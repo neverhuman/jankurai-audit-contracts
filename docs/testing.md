@@ -43,10 +43,9 @@ finding, its `rule_id`, `path`, and severity.
 ## Cost budget
 
 This repo runs no model calls, no paid APIs, and no long-running builds, so its
-recurring CI cost budget is effectively zero: two short jobs (schema validation
-and a single audit invocation), each capped at a 20-minute timeout in
-[`.github/workflows/ci.yml`](../.github/workflows/ci.yml). The fast lane is
-designed to complete in seconds locally so agent iteration stays cheap.
+recurring CI cost budget is effectively zero: two short lanes (schema validation
+and a single audit invocation), each budgeted at a 20-minute timeout. The fast
+lane is designed to complete in seconds locally so agent iteration stays cheap.
 
 Explicit budget policy for any paid or unbounded operation introduced later:
 
