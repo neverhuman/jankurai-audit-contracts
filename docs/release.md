@@ -25,16 +25,32 @@ The release preparer runs this command before creating the release PR. Set
 name the candidate version:
 
 ```sh
-: "${PREVIOUS_RELEASE_TAG:?set the previous published release tag}"
-git rev-parse --verify "refs/tags/$PREVIOUS_RELEASE_TAG^{commit}"
-git merge-base --is-ancestor "$PREVIOUS_RELEASE_TAG" HEAD
-version=$(cat VERSION)
-mkdir -p target/release-notes
-{
-  printf '## %s\n\n' "$version"
-  git log --reverse --no-merges --format='- %s%n%(trailers:key=Todo)' "$PREVIOUS_RELEASE_TAG..HEAD"
-} > "target/release-notes/$version.md"
+(
+  set -eu
+  : "${PREVIOUS_RELEASE_TAG:?set the previous published release tag}"
+  tag_ref="refs/tags/$PREVIOUS_RELEASE_TAG"
+  git rev-parse --verify --quiet "$tag_ref^{commit}" >/dev/null
+  git merge-base --is-ancestor "$tag_ref" HEAD
+  version=$(cat VERSION)
+  mkdir -p target/release-notes
+  notes=$(mktemp "target/release-notes/.$version.XXXXXX")
+  trap 'rm -f "$notes"' EXIT
+  {
+    printf '## %s\n\n' "$version"
+    git log --reverse --no-merges --format='- %s%n%(trailers:key=Todo)' "$tag_ref..HEAD"
+  } > "$notes"
+  mv "$notes" "target/release-notes/$version.md"
+)
 ```
+
+The command runs as a subshell with `set -eu`, so any failing step stops it
+before the notes file is touched. It uses the full `refs/tags/` ref throughout,
+so a branch with the same name as the tag cannot be picked up by mistake, and it
+writes to a temporary file that replaces `target/release-notes/<version>.md`
+only after `git log` succeeds. A missing tag, a tag that is not an ancestor of
+`HEAD`, or an unset `PREVIOUS_RELEASE_TAG` leaves any earlier notes file as it
+was. `scripts/release-notes-test.sh` runs this exact block against valid,
+missing, non-ancestor and branch-shadowed tags.
 
 Review that generated file for compatibility changes and rollback commits, then
 insert the version block into `CHANGELOG.md` in the release PR. Preserve all
