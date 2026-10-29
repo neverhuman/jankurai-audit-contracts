@@ -29,11 +29,11 @@ git config user.name tester
 printf '1.2.3\n' > VERSION
 git add VERSION
 git commit -q -m 'initial'
-git update-ref refs/tags/v1 HEAD
+git tag v1
 git commit -q --allow-empty -m 'Add widget' -m 'Todo: 20260101-000000-abc123'
 git switch -q -c side v1
 git commit -q --allow-empty -m 'Side work'
-git update-ref refs/tags/side-tag HEAD
+git tag side-tag
 git switch -q main
 # Branch "v2" exists but no tag "v2" does: the branch must not stand in for it.
 git branch v2 v1
